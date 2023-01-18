@@ -1,0 +1,96 @@
+﻿@model TimeWorkedManagementSystem.Models.Shift
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["TotalTime"] = $"{((int)(Model.TotalTime.TotalHours)).ToString().PadLeft(2, '0')}:{Model.TotalTime.Minutes.ToString().PadLeft(2, '0')}:{Model.TotalTime.Seconds.ToString().PadLeft(2, '0')}";
+    ViewData["WorkTime"] = $"{((int)(Model.WorkTime.TotalHours)).ToString().PadLeft(2, '0')}:{Model.WorkTime.Minutes.ToString().PadLeft(2, '0')}:{Model.WorkTime.Seconds.ToString().PadLeft(2, '0')}";
+    ViewData["BreakTime"] = $"{((int)(Model.BreakTime.TotalHours)).ToString().PadLeft(2, '0')}:{Model.BreakTime.Minutes.ToString().PadLeft(2, '0')}:{Model.BreakTime.Seconds.ToString().PadLeft(2, '0')}";
+}
+
+@*<h1>Details</h1>*@
+
+<div>
+    <h4>Shift</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Start)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Start)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.End)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.End)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalTime)
+        </dt>
+        <dd class="col-sm-10">
+            @ViewData["TotalTime"]
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkTime)
+        </dt>
+        <dd class="col-sm-10">
+            @ViewData["WorkTime"]
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BreakTime)
+        </dt>
+        <dd class="col-sm-10">
+            @ViewData["BreakTime"]
+        </dd>
+    </dl>
+    <h3>Breaks</h3>
+    <dl class="row" style="display:flex">
+        @foreach (var b in Model.Breaks)
+        {
+            <!--<dl class="row">-->
+                <div class="round-container">
+                    <div style="display:flex">
+                        <span class="bold" style="margin-right:5px">From: </span>
+                        <div style="margin-left:auto">
+                            @Html.DisplayFor(model => b.Start)
+                        </div>
+                    </div>
+                    <div style="display:flex">
+                        <span class="bold" style="margin-right:5px">To: </span>
+                        <div style="margin-left:auto">
+                            @Html.DisplayFor(model => b.End)
+                        </div>
+                    </div>
+                </div>
+            <!--</dl>-->
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+<style>
+    .round-container {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 10px;
+        padding: 10px;
+        margin:10px;
+        width: auto;
+        box-shadow: 5px 5px 10px black;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+</style>
