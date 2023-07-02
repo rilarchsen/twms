@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj": {}
+    "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj": {
+    "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
+        "projectUniqueName": "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
         "projectName": "TimeWorkedManagementSystem",
-        "projectPath": "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
+        "projectPath": "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
         "packagesPath": "C:\\Users\\rilar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\obj\\",
+        "outputPath": "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -27,6 +27,7 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.302\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -48,6 +49,10 @@
             "Auth0.AspNetCore.Authentication": {
               "target": "Package",
               "version": "[1.0.4, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[7.0.8, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -97,7 +102,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

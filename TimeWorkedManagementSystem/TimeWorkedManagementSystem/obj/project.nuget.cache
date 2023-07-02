@@ -1,13 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "LUKBmn6+Q3D/7TmjKyDOoTTi91nCLwBGlEdCfK9JAUXQvzNNWw4C1CEO/pN+a6k/2jmsFGpKsPgsxpIdCoYftg==",
+  "dgSpecHash": "n/eklhhAG+gzRFM796Do/CW2S568UFf2/yG64K+7c7sNazWtS6cDe7gek0uhAfwsvielCP4ewCee0UdwcKuRTw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\rilar\\Documents\\GitHub\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
+  "projectFilePath": "C:\\Users\\rilar\\source\\repos\\twms\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem\\TimeWorkedManagementSystem.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rilar\\.nuget\\packages\\auth0.aspnetcore.authentication\\1.0.4\\auth0.aspnetcore.authentication.1.0.4.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\rilar\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.8\\microsoft.aspnetcore.authentication.jwtbearer.7.0.8.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\6.0.9\\microsoft.aspnetcore.authentication.openidconnect.6.0.9.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.11\\microsoft.aspnetcore.razor.language.6.0.11.nupkg.sha512",
     "C:\\Users\\rilar\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

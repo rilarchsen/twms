@@ -15,8 +15,6 @@ namespace TimeWorkedManagementSystem
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthentication();
@@ -26,7 +24,7 @@ namespace TimeWorkedManagementSystem
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller}/{action}/{id?}");
         }
     }
 }

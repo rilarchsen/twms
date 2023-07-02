@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TimeWorkedManagementSystem.Contexts;
+using TimeWorkedManagementSystem.DTOs;
 using TimeWorkedManagementSystem.Interfaces;
 using TimeWorkedManagementSystem.Models;
 
@@ -13,156 +14,76 @@ namespace TimeWorkedManagementSystem.Controllers
 {
     public class CompaniesController : Controller
     {
-        private readonly UserDbContext _context;
+        private readonly UserDbContext _dbContext;
         private readonly IUserService _userService;
 
-        public CompaniesController(UserDbContext context, IUserService userService)
+        public CompaniesController(UserDbContext dbContext, IUserService userService)
         {
-            _context = context;
+            _dbContext = dbContext;
             _userService = userService;
         }
-
+        
         // GET: Companies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> GetAllCompanies()
         {
-              return _context.Companies != null ? 
-                          View(await _context.Companies.ToListAsync()) :
-                          Problem("Entity set 'UserDbContext.Companies'  is null.");
+            return Ok(await _dbContext.Companies.ToListAsync());
         }
-
-        // GET: Companies/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        
+        // GET: Companies/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCompanyDetails(Guid id)
         {
-            if (id == null || _context.Companies == null)
+            Company? company;
+            if ((company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id)) is null)
             {
-                return NotFound();
+                return NotFound(id);
             }
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
+            return Ok(company);
         }
-
-        // GET: Companies/Create
-        public IActionResult Create()
+        
+        // PUT: Companies
+        [HttpPut]
+        public async Task<IActionResult> AddCompany(CreateCompanyRequest request)
         {
-            return View();
+            var company = _dbContext.Companies.Add(new Company
+            {
+                Name = request.Name,
+                Email = request.Email
+            });
+            await _dbContext.SaveChangesAsync();
+            return Ok(company.Entity);
         }
-
-        // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email")] Company company)
+        
+        // PUT: Companies/Edit
+        [HttpPut("Edit")]
+        public async Task<IActionResult> EditCompany(EditCompanyRequest request)
         {
-            if (ModelState.IsValid)
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == request.CompanyId);
+            if (company is null)
             {
-                company.UserId = _userService.UserId;
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound(request.CompanyId);
             }
-            return View(company);
+
+            company.Name = request.Name;
+            company.Email = request.Email;
+            await _dbContext.SaveChangesAsync();
+            return Ok(company);
         }
-
-        // GET: Companies/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        
+        // DELETE: Companies/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCompany(Guid id)
         {
-            if (id == null || _context.Companies == null)
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id);
+            if (company is null)
             {
-                return NotFound();
+                return NotFound(id);
             }
 
-            var company = await _context.Companies.FindAsync(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Email")] Company company)
-        {
-            if (id != company.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    company.UserId = _userService.UserId;
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
-        }
-
-        // GET: Companies/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
-
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
-        }
-
-        // POST: Companies/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            if (_context.Companies == null)
-            {
-                return Problem("Entity set 'UserDbContext.Companies'  is null.");
-            }
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
-            {
-                _context.Companies.Remove(company);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CompanyExists(Guid id)
-        {
-          return (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
+            _dbContext.Companies.Remove(company);
+            await _dbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

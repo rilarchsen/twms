@@ -1,5 +1,8 @@
-﻿using Auth0.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.Interfaces;
 using TimeWorkedManagementSystem.Middleware;
@@ -23,13 +26,19 @@ namespace TimeWorkedManagementSystem
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<AuthorizationMiddleware>();
 
-            builder.Services
-                .AddAuth0WebAppAuthentication(options => {
-                    options.Domain = builder.Configuration["Auth0:Domain"];
-                    options.ClientId = builder.Configuration["Auth0:ClientId"];
-                    options.Scope += " email";
-                    //options.CallbackPath = "/account/profile";
-                });
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["Auth0:Domain"];
+                options.Audience = builder.Configuration["Auth0:Audience"];
+                options.TokenValidationParameters = new TokenValidationParameters {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            });
 
             return builder;
         }

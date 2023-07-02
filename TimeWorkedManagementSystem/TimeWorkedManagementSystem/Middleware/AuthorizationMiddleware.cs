@@ -23,8 +23,9 @@ namespace TimeWorkedManagementSystem.Middleware
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             string? name = context.User.Identity?.Name;
-            string? email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            string? email = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaims.Email)?.Value;
 
+            var claims = context.User.FindFirst(CustomClaims.Email)?.Value;
             if (email is not null)
             {
                 User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -46,5 +47,10 @@ namespace TimeWorkedManagementSystem.Middleware
 
             await next(context);
         }
+    }
+
+    public static class CustomClaims
+    {
+        public const string Email = "https://twms.app/email";
     }
 }
