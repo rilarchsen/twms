@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.DTOs;
 using TimeWorkedManagementSystem.Interfaces;
@@ -12,7 +8,7 @@ using TimeWorkedManagementSystem.Models;
 
 namespace TimeWorkedManagementSystem.Controllers
 {
-    public class CompaniesController : Controller
+    public class CompaniesController : ApiControllerBase
     {
         private readonly UserDbContext _dbContext;
         private readonly IUserService _userService;
@@ -24,6 +20,8 @@ namespace TimeWorkedManagementSystem.Controllers
         }
         
         // GET: Companies
+        [HttpGet]
+        [SwaggerResponse(200, "OK", typeof(Company[]))]
         public async Task<IActionResult> GetAllCompanies()
         {
             return Ok(await _dbContext.Companies.ToListAsync());
@@ -31,6 +29,8 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // GET: Companies/{id}
         [HttpGet("{id}")]
+        [SwaggerResponse(200, "OK", typeof(Company))]
+        [SwaggerResponse(404, "Not found")]
         public async Task<IActionResult> GetCompanyDetails(Guid id)
         {
             Company? company;
@@ -44,6 +44,7 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // PUT: Companies
         [HttpPut]
+        [SwaggerResponse(200, "OK", typeof(Company))]
         public async Task<IActionResult> AddCompany(CreateCompanyRequest request)
         {
             var company = _dbContext.Companies.Add(new Company
@@ -57,6 +58,8 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // PUT: Companies/Edit
         [HttpPut("Edit")]
+        [SwaggerResponse(200, "OK", typeof(Company))]
+        [SwaggerResponse(404, "Not found")]
         public async Task<IActionResult> EditCompany(EditCompanyRequest request)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == request.CompanyId);
@@ -73,6 +76,8 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // DELETE: Companies/{id}
         [HttpDelete("{id}")]
+        [SwaggerResponse(200, "OK")]
+        [SwaggerResponse(404, "Not found")]
         public async Task<IActionResult> DeleteCompany(Guid id)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == id);

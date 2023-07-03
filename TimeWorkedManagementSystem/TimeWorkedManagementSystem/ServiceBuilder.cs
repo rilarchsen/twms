@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using Auth0.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.Interfaces;
 using TimeWorkedManagementSystem.Middleware;
@@ -14,18 +14,7 @@ namespace TimeWorkedManagementSystem
     {
         public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
         {
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
-            ServiceDescriptor? userDbContext = builder.Services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UserDbContext>));
-
-            builder.Services.AddDbContext<UserDbContext>(options => {
-                options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]);
-            });
-
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<AuthorizationMiddleware>();
-
+            
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,6 +27,60 @@ namespace TimeWorkedManagementSystem
                 options.TokenValidationParameters = new TokenValidationParameters {
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
+            });
+            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "_myCORS",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
+            
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+
+            //ServiceDescriptor? userDbContext = builder.Services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<UserDbContext>));
+
+            builder.Services.AddDbContext<UserDbContext>(options => {
+                options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+            });
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<AuthorizationMiddleware>();
+            
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "TWMS API",
+                    Description = "An ASP.NET Core Web API for managing work shifts",
+                });
+
+                var jwtSecurityScheme = new OpenApiSecurityScheme {
+                    BearerFormat = "JWT",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    //Scheme = "Bearer",
+                    Description = "Put JWT Bearer token on textbox below! (include 'Bearer ' keyword)",
+
+                    Reference = new OpenApiReference {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {jwtSecurityScheme, Array.Empty<string>()}
+                });
             });
 
             return builder;

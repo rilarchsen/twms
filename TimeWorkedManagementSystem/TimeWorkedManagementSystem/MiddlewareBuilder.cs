@@ -16,7 +16,15 @@ namespace TimeWorkedManagementSystem
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
+            app.UseCors("_myCORS");
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -25,6 +33,8 @@ namespace TimeWorkedManagementSystem
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{action}/{id?}");
+            
+
         }
     }
 }

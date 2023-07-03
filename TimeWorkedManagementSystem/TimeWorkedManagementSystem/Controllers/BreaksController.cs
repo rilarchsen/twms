@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.DTOs;
 using TimeWorkedManagementSystem.Interfaces;
@@ -7,7 +8,7 @@ using TimeWorkedManagementSystem.Models;
 
 namespace TimeWorkedManagementSystem.Controllers
 {
-    public class BreaksController : Controller
+    public class BreaksController : ApiControllerBase
     {
         private readonly UserDbContext _dbContext;
         private readonly IUserService _userService;
@@ -19,11 +20,16 @@ namespace TimeWorkedManagementSystem.Controllers
         }
 
         // GET: Breaks
+        [HttpGet]
+        [SwaggerResponse(200, "OK", typeof(Break[]))]
         public async Task<IActionResult> GetAllBreaks()
         {
             return Ok(await _dbContext.Breaks.ToListAsync());
         }
 
+        [HttpGet("ForShift/{shiftId}")]        
+        [SwaggerResponse(200, "OK", typeof(Break[]))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> GetShiftBreaks(Guid shiftId)
         {
             Shift? shift = await _dbContext.Shifts.FirstOrDefaultAsync(s => s.Id == shiftId);
@@ -34,6 +40,8 @@ namespace TimeWorkedManagementSystem.Controllers
 
         // GET: Breaks/{id}
         [HttpGet("{id}")]
+        [SwaggerResponse(200, "OK", typeof(Break))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> GetBreakDetails(Guid id)
         {
             Break? @break;
@@ -46,6 +54,8 @@ namespace TimeWorkedManagementSystem.Controllers
         }
 
         // PUT: Breaks
+        [HttpPut]
+        [SwaggerResponse(200, "OK", typeof(Break))]
         public async Task<IActionResult> AddBreak(CreateBreakRequest request)
         {
             var @break = _dbContext.Breaks.Add(new Break
@@ -60,6 +70,7 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // PUT: Breaks/Start
         [HttpPut("Start")]
+        [SwaggerResponse(200, "OK", typeof(Break))]
         public async Task<IActionResult> StartBreak(StartBreakRequest request)
         {
             var @break = _dbContext.Breaks.Add(new Break
@@ -73,6 +84,8 @@ namespace TimeWorkedManagementSystem.Controllers
         
         // PUT: Breaks/End
         [HttpPut("End")]
+        [SwaggerResponse(200, "OK", typeof(Break))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> EndBreak(EndBreakRequest request)
         {
             var @break = await _dbContext.Breaks.FirstOrDefaultAsync(b => b.Id == request.BreakId);
@@ -85,6 +98,8 @@ namespace TimeWorkedManagementSystem.Controllers
 
         // PUT: Breaks/Edit
         [HttpPut("Edit")]
+        [SwaggerResponse(200, "OK", typeof(Break))]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> Edit(EditBreakRequest request)
         {
             var existingBreak = await _dbContext.Breaks.FirstOrDefaultAsync(b => b.Id == request.Id);
@@ -100,6 +115,8 @@ namespace TimeWorkedManagementSystem.Controllers
 
         // DELETE: Breaks/{id}
         [HttpDelete("{id}")]
+        [SwaggerResponse(200, "OK")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> Delete(Guid id)
         {
             Break? @break;

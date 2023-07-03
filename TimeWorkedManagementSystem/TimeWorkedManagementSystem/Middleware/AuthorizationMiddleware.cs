@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.Interfaces;
 using TimeWorkedManagementSystem.Models;
@@ -22,10 +21,9 @@ namespace TimeWorkedManagementSystem.Middleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            string? name = context.User.Identity?.Name;
+            string? name = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaims.Name)?.Value ?? context.User.Identity?.Name;
             string? email = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaims.Email)?.Value;
 
-            var claims = context.User.FindFirst(CustomClaims.Email)?.Value;
             if (email is not null)
             {
                 User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -51,6 +49,7 @@ namespace TimeWorkedManagementSystem.Middleware
 
     public static class CustomClaims
     {
+        public const string Name = "https://twms.app/name";
         public const string Email = "https://twms.app/email";
     }
 }

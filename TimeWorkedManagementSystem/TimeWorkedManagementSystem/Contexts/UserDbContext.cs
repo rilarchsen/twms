@@ -23,7 +23,7 @@ namespace TimeWorkedManagementSystem.Contexts
             modelBuilder.Entity<Shift>().HasQueryFilter(s => s.UserId == UserService.UserId);
             modelBuilder.Entity<Break>().HasQueryFilter(b => b.UserId == UserService.UserId);
 
-            modelBuilder.Entity<Shift>().HasOne(s => s.Company).WithMany(c => c.Shifts).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Shift>().HasOne(s => s.Company).WithMany(c => c.Shifts).OnDelete(DeleteBehavior.Cascade);
         }
 
         public sealed override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

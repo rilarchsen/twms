@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using TimeWorkedManagementSystem.Contexts;
 using TimeWorkedManagementSystem.DTOs;
 using TimeWorkedManagementSystem.Interfaces;
@@ -7,7 +8,7 @@ using TimeWorkedManagementSystem.Models;
 
 namespace TimeWorkedManagementSystem.Controllers
 {
-    public class ShiftsController : Controller
+    public class ShiftsController : ApiControllerBase
     {
         private readonly UserDbContext _dbContext;
         private readonly IUserService _userService;
@@ -19,43 +20,68 @@ namespace TimeWorkedManagementSystem.Controllers
         }
 
         // GET: Shifts
+        [HttpGet]
+        [SwaggerResponse(200, "OK", typeof(Shift[]))]
         public async Task<IActionResult> GetAllShifts()
         {
-            return Ok(await _dbContext.Shifts
+            List<Shift> allShifts = await _dbContext.Shifts
                 .Include(s => s.Breaks)
-                .Include(s => s.Company)
-                .ToListAsync());
+                .AsNoTracking()
+                .ToListAsync();
+            foreach (Shift shift in allShifts)
+            {
+                shift.Company = await _dbContext.Companies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == shift.CompanyId);
+            }
+            return Ok(allShifts);
         }
         
         // GET: Shifts/Active
         [HttpGet("Active")]
+        [SwaggerResponse(200, "OK", typeof(Shift[]))]
         public async Task<IActionResult> GetActiveShifts()
         {
-            return Ok(await _dbContext.Shifts
+            List<Shift> activeShifts = await _dbContext.Shifts
                 .Include(s => s.Breaks)
-                .Include(s => s.Company)
                 .Where(s => s.End == null)
-                .ToListAsync());
+                .AsNoTracking()
+                .ToListAsync();
+            foreach (Shift shift in activeShifts)
+            {
+                shift.Company = await _dbContext.Companies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == shift.CompanyId);
+            }
+            return Ok(activeShifts);
         }
         
         // GET: Shifts/Company/{companyId}
         [HttpGet("Company/{companyId}")]
+        [SwaggerResponse(200, "OK", typeof(Shift[]))]
         public async Task<IActionResult> GetCompanyShifts(Guid companyId)
         {
-            return Ok(await _dbContext.Shifts
+            List<Shift> companyShifts = await _dbContext.Shifts
                 .Include(s => s.Breaks)
-                .Include(s => s.Company)
                 .Where(s => s.CompanyId == companyId)
-                .ToListAsync());
+                .AsNoTracking()
+                .ToListAsync();
+            foreach (Shift shift in companyShifts)
+            {
+                shift.Company = await _dbContext.Companies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == shift.CompanyId);
+            }
+            return Ok(companyShifts);
         }
 
         // GET: Shifts/{id}
         [HttpGet("{id}")]
+        [SwaggerResponse(200, "OK", typeof(Shift))]
         public async Task<IActionResult> GetShiftDetails(Guid id)
         {
             Shift? shift = await _dbContext.Shifts
                 .Include(s => s.Breaks)
-                .Include(s => s.Company)
                 .FirstOrDefaultAsync(s => s.Id == id);
             
             if (shift is null)
@@ -63,11 +89,16 @@ namespace TimeWorkedManagementSystem.Controllers
                 return NotFound(id);
             }
 
+            shift.Company = await _dbContext.Companies
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == shift.CompanyId);
+
             return Ok(shift);
         }
         
         // POST: Shifts
         [HttpPost]
+        [SwaggerResponse(200, "OK", typeof(Shift))]
         public async Task<IActionResult> CreateShift(CreateShiftRequest request)
         {
             var shift = _dbContext.Shifts.Add(new Shift
@@ -94,6 +125,7 @@ namespace TimeWorkedManagementSystem.Controllers
 
         // POST: Shifts/Start
         [HttpPost("Start")]
+        [SwaggerResponse(200, "OK", typeof(Shift))]
         public async Task<IActionResult> StartShift(StartShiftRequest request)
         {
             var shift = _dbContext.Shifts.Add(new Shift
@@ -107,7 +139,8 @@ namespace TimeWorkedManagementSystem.Controllers
         }
         
         // PUT: Shifts/End
-        [HttpPut("Start")]
+        [HttpPut("End")]
+        [SwaggerResponse(200, "OK", typeof(Shift))]
         public async Task <IActionResult> EndShift(EndShiftRequest request)
         {
             var shift = await _dbContext.Shifts.FirstOrDefaultAsync(s => s.Id == request.ShiftId);
@@ -120,6 +153,7 @@ namespace TimeWorkedManagementSystem.Controllers
 
         // PUT: Shifts/{id}
         [HttpPut("{id}")]
+        [SwaggerResponse(200, "OK", typeof(Shift))]
         public async Task<IActionResult> UpdateShift(Guid id, [FromBody] UpdateShiftRequest request)
         {
             Shift? shift;
@@ -130,12 +164,15 @@ namespace TimeWorkedManagementSystem.Controllers
 
             shift.Start = request.Start;
             shift.End = request.End;
+            //TODO: handle breaks
             await _dbContext.SaveChangesAsync();
             return Ok(shift);
         }
 
         // DELETE: Shifts/{id}
         [HttpDelete("{id}")]
+        [SwaggerResponse(200, "OK")]
+        [SwaggerResponse(404, "Not Found")]
         public async Task<IActionResult> DeleteShift(Guid id)
         {
             Shift? shift;
